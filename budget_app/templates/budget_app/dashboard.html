@@ -1,0 +1,113 @@
+{% extends 'budget_app/base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1>Budget Management Dashboard</h1>
+    </div>
+</div>
+
+{% if not active_year %}
+<div class="alert alert-warning">
+    <strong>Warning:</strong> No active fiscal year found. Please 
+    <a href="{% url 'budget_app:fiscal_year_create' %}" class="alert-link">create and activate a fiscal year</a> 
+    to start managing budgets.
+</div>
+{% endif %}
+
+<div class="row">
+    <!-- Summary Cards -->
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Active Fiscal Year</h5>
+                <p class="card-text">
+                    {% if active_year %}
+                        {{ active_year }}
+                    {% else %}
+                        Not Set
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Budget Lines</h5>
+                <p class="card-text">{{ budget_lines_count }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">GL Accounts</h5>
+                <p class="card-text">{{ gl_accounts_count }}</p>
+            </div>
+        </div>
+    </div>
+
+    {% if active_year %}
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Budget Entries</h5>
+                <p class="card-text">{{ budget_entries_count }}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row">
+    <!-- Quick Links -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <a href="{% url 'budget_app:budget_entry' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-plus-circle"></i> Create Budget Entry
+                    </a>
+                    <a href="{% url 'budget_app:forecast_update' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-graph-up"></i> Update Forecasts
+                    </a>
+                    <a href="{% url 'budget_app:actual_import' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-upload"></i> Import Actuals
+                    </a>
+                    <a href="{% url 'budget_app:report_view' %}" class="list-group-item list-group-item-action">
+                        <i class="bi bi-file-text"></i> View Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if active_year %}
+    <!-- Monthly Overview -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Monthly Overview</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for month_num, month_name in forecast_months %}
+                    <a href="{% url 'budget_app:forecast_update' %}?month={{ month_num }}" 
+                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        {{ month_name }}
+                        <span class="badge bg-primary rounded-pill">View</span>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

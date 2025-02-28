@@ -1,0 +1,91 @@
+{% extends 'budget_app/base.html' %}
+{% load widget_tweaks %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1>Forecast Update</h1>
+        <p class="lead">Fiscal Year: {{ active_year }}</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Select Month</h5>
+            </div>
+            <div class="card-body">
+                <div class="btn-group">
+                    {% for month_num, month_name in months %}
+                    <a href="?month={{ month_num }}" 
+                       class="btn btn-outline-primary {% if current_month == month_num %}active{% endif %}">
+                        {{ month_name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Update Forecasts</h5>
+            </div>
+            <div class="card-body">
+                {% if forecasts %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Budget Line</th>
+                                <th>Annual Budget</th>
+                                <th>Monthly Budget</th>
+                                <th>Current Forecast</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in forecasts %}
+                            <tr>
+                                <td>{{ item.budget_line }}</td>
+                                <td>${{ item.budget_amount|floatformat:2 }}</td>
+                                <td>${{ item.budget_amount|div:12|floatformat:2 }}</td>
+                                <td>
+                                    <form method="post" class="forecast-form">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="forecast_id" value="{{ item.forecast.id }}">
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            {{ item.form.amount|attr:"class:form-control" }}
+                                            <button type="submit" class="btn btn-outline-primary">Update</button>
+                                        </div>
+                                        {{ item.form.amount.errors }}
+                                    </form>
+                                </td>
+                                <td>
+                                    <span class="badge {% if item.forecast.amount > item.budget_amount|div:12 %}bg-warning{% else %}bg-success{% endif %}">
+                                        {% if item.forecast.amount > item.budget_amount|div:12 %}
+                                            Over Budget
+                                        {% else %}
+                                            Within Budget
+                                        {% endif %}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No forecasts found for the selected month.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,75 @@
+{% extends 'budget_app/base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1>{% if object %}Edit{% else %}Create{% endif %} Fiscal Year</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Fiscal Year Details</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">
+                            {{ field.label }}
+                        </label>
+                        {{ field.errors }}
+                        {% if field.name == 'is_active' %}
+                            <div class="form-check">
+                                {{ field|attr:"class:form-check-input" }}
+                            </div>
+                        {% else %}
+                            {{ field|attr:"class:form-control" }}
+                        {% endif %}
+                        {% if field.help_text %}
+                            <div class="form-text">{{ field.help_text }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            {% if object %}Update{% else %}Create{% endif %} Fiscal Year
+                        </button>
+                        <a href="{% url 'budget_app:fiscal_year_list' %}" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Instructions</h5>
+            </div>
+            <div class="card-body">
+                <h6>About Fiscal Years</h6>
+                <ul>
+                    <li>Enter the year number (e.g., 2024)</li>
+                    <li>Only one fiscal year can be active at a time</li>
+                    <li>Setting a new fiscal year as active will automatically deactivate the currently active year</li>
+                    <li>The active fiscal year will be used for all budget operations</li>
+                </ul>
+                
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Note:</strong> Make sure to create and activate a fiscal year before creating budget entries.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

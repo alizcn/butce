@@ -1,0 +1,83 @@
+{% extends 'budget_app/base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1>Import Actual Expenses</h1>
+        <p class="lead">Upload Excel file containing actual expenses data</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Upload Form</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.fiscal_year.id_for_label }}" class="form-label">Fiscal Year</label>
+                        {{ form.fiscal_year|add_class:"form-select" }}
+                        {% if form.fiscal_year.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.fiscal_year.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.month.id_for_label }}" class="form-label">Month</label>
+                        {{ form.month|add_class:"form-select" }}
+                        {% if form.month.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.month.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.excel_file.id_for_label }}" class="form-label">Excel File</label>
+                        {{ form.excel_file|add_class:"form-control" }}
+                        {% if form.excel_file.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.excel_file.errors }}
+                        </div>
+                        {% endif %}
+                        <div class="form-text">
+                            Upload an Excel file (.xlsx) containing actual expense data.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Import Data</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Instructions</h5>
+            </div>
+            <div class="card-body">
+                <h6>Excel File Format:</h6>
+                <ul class="mb-0">
+                    <li>File must be in .xlsx format</li>
+                    <li>Required columns:
+                        <ul>
+                            <li>GL Account</li>
+                            <li>Amount</li>
+                        </ul>
+                    </li>
+                    <li>GL Account must match existing accounts</li>
+                    <li>Amount should be in decimal format</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
